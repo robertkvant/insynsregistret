@@ -71,6 +71,7 @@ class Insynsregistret:
             'Page': '1',
         }
         url = "https://marknadssok.fi.se/Publiceringsklient/sv-SE/Search/Search"
+        
 
         # Send the GET request with proxies and headers
         response = requests.get(
@@ -79,7 +80,7 @@ class Insynsregistret:
             headers=headers,
             params=payload
         )
-
+        
         # Ensure the response is encoded properly
         response.encoding = response.apparent_encoding
 
