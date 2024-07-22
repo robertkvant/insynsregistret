@@ -22,7 +22,10 @@
 
 import insyn
 import json
-from flask import Flask, request
+import datetime
+from fastapi import FastAPI
+
+app = FastAPI()
 
 # Read proxy settings from file 'proxies.txt'
 # The proxies.txt file should contain JSON data in the following format:
@@ -41,12 +44,8 @@ proxies = json.loads(data)
 # Initialize the Insynsregistret class with the proxy settings
 insyn = insyn.Insynsregistret(proxies=proxies)
 
-# Setup a simple Flask web application and serve 
-# some simple endpoints to get JSON data back
-app = Flask(__name__)
-
-@app.route("/getrecords/<company>/<startDate>/<endDate>", methods=['GET'])
-def getrecords(company, startDate, endDate):
+@app.get("/getrecords/{company}/{startDate}/{endDate}")
+def read_item(company: str, startDate: datetime.date, endDate: datetime.date):
     """
     Endpoint to get records for a specific company between given start and end dates.
     (Currently uses the same start and end dates for publication and transaction dates)
@@ -64,16 +63,12 @@ def getrecords(company, startDate, endDate):
         transToDate=endDate
     )
 
-@app.route("/search/<company>", methods=['GET'])
-def search(company):
+@app.get("/search/{company}")
+def read_item(company: str):
     """
     Endpoint to search for a specific company.
-    
+        
     :param company: The name of the company.
     :return: JSON response with the search results.
     """
     return insyn.search(company)
-
-if __name__ == "__main__":
-    # Run the Flask application
-    app.run(debug=True)
